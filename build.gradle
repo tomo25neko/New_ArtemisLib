@@ -1,0 +1,105 @@
+plugins {
+    id 'eclipse' // Eclipseサポート
+    id 'idea'   // IntelliJ IDEAサポート
+    id 'net.minecraftforge.gradle' version '[6.0.16,6.2)' // ForgeGradleプラグイン
+    id 'org.parchmentmc.librarian.forgegradle' version '1.+' // Parchment mappings用プラグイン
+}
+
+// 基本情報
+group = mod_group_id // ModのグループID
+version = mod_version // Modのバージョン
+
+base {
+    archivesName = mod_id // アーカイブ名をMod IDに設定
+}
+
+java {
+    toolchain.languageVersion = JavaLanguageVersion.of(17) // Java 17を使用（Minecraft 1.18.2要件）
+}
+
+minecraft {
+    // 使用するマッピングの設定（Parchment）
+    mappings channel: 'parchment', version: '2022.11.06-1.18.2'
+
+    copyIdeResources = true // IDEでのリソース同期を有効化
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run') // 実行時の作業ディレクトリ
+            property 'forge.logging.markers', 'REGISTRIES' // レジストリ関連ログ
+            property 'forge.logging.console.level', 'debug' // デバッグログレベル
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main // メインソースセット
+                }
+            }
+        }
+
+        client {
+            property 'forge.enabledGameTestNamespaces', mod_id // GameTest設定
+        }
+
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui' // GUIなしでサーバーを起動
+        }
+
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        data {
+            workingDirectory project.file('run-data') // データ生成用ディレクトリ
+            args '--mod', mod_id, '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
+        }
+    }
+}
+
+// 自動生成リソースを含む
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    mavenCentral() // 標準Mavenリポジトリ
+    maven { url = "https://maven.minecraftforge.net" } // Forge公式リポジトリ
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}" // Forge依存関係
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    def replaceProperties = [
+            minecraft_version: minecraft_version,
+            forge_version: forge_version,
+            mod_id: mod_id,
+            mod_name: mod_name,
+            mod_license: mod_license,
+            mod_version: mod_version,
+            mod_authors: mod_authors,
+            mod_description: mod_description,
+    ]
+
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                "Specification-Title": mod_id,
+                "Specification-Vendor": mod_authors,
+                "Specification-Version": "1",
+                "Implementation-Title": project.name,
+                "Implementation-Version": project.jar.archiveVersion,
+                "Implementation-Vendor": mod_authors,
+                "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // UTF-8文字エンコーディング
+}

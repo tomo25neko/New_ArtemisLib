@@ -1,4 +1,4 @@
-package org.tomo25neko.new_artemis;
+package org.new_artemis;
 
 public class Reference
 {

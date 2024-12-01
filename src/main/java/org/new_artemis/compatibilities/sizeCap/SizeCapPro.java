@@ -8,38 +8,42 @@ import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class SizeCapPro implements ICapabilityProvider {
-    private  ISizeCap capabilitySize;
-    private final LazyOptional<ISizeCap> lazyInstance = LazyOptional.of(() -> this.capabilitySize);
 
+    private final ISizeCap capabilitySize;
+    private final LazyOptional<ISizeCap> lazyInstance;
+
+    // Capabilityトークンの宣言
     public static final Capability<ISizeCap> SIZE_CAPABILITY = CapabilityManager.get(new CapabilityToken<>() {});
-
-    // デフォルトコンストラクタで確実に初期化
-    public SizeCapPro() {
-        this.capabilitySize = new SizeDefaultCap(); // 必ず初期化
-    }
 
     // 引数付きコンストラクタ
     public SizeCapPro(ISizeCap capability) {
-        // capability が null でないことを確認
         this.capabilitySize = (capability != null) ? capability : new SizeDefaultCap(); // nullを避ける
+        this.lazyInstance = LazyOptional.of(() -> this.capabilitySize);
     }
 
+    // getCapabilityメソッドのオーバーライド
     @Nonnull
     @Override
     public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> capability, @Nullable Direction facing) {
         return capability == SIZE_CAPABILITY ? lazyInstance.cast() : LazyOptional.empty();
     }
 
+    // CapabilityのNBTシリアライズ
     public CompoundTag serializeNBT() {
         return capabilitySize.saveToNBT();
     }
 
+    // CapabilityのNBTデシリアライズ
     public void deserializeNBT(CompoundTag nbt) {
         capabilitySize.loadFromNBT(nbt);
+    }
+
+    // LazyOptionalの解放
+    public void invalidate() {
+        lazyInstance.invalidate();
     }
 }

@@ -1,20 +1,21 @@
 modLoader="javafml"
 loaderVersion="[40.2.0,)"
 license="MIT" # 適切なライセンスを設定してください
-[[mods]]
-modId="newartemis"
-version="1.0.0"
-displayName="New Artemis"
-description='''このMODはプレイヤーにユニークな新しい体験を提供します。'''
 
-[[dependencies."newartemis"]]
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+description='''${mod_description}'''
+
+[[dependencies."${mod_id}"]]
 modId="forge"
 mandatory=true
 versionRange="[40.1.0,44.0.0)"
 ordering="NONE"
 side="BOTH"
 
-[[dependencies."newartemis"]]
+[[dependencies."${mod_id}"]]
 modId="minecraft"
 mandatory=true
 versionRange="[1.18.2,1.19)"

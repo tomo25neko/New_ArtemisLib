@@ -10,7 +10,7 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Mod(Reference.MODID)
+@Mod("newartemis")
 public class Main {
 
     // ロガーインスタンス

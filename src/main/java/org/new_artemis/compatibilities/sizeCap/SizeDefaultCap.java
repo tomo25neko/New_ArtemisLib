@@ -59,13 +59,13 @@ public class SizeDefaultCap implements ISizeCap {
     @Override
     public void loadFromNBT(CompoundTag compound) {
         if (compound.contains("transformed")) {
-            this.transformed = compound.getBoolean("transformed");
+            setTransformed(compound.getBoolean("transformed"));
         }
         if (compound.contains("defaultWidth")) {
-            this.defaultWidth = compound.getFloat("defaultWidth");
+            setDefaultWidth(compound.getFloat("defaultWidth"));
         }
         if (compound.contains("defaultHeight")) {
-            this.defaultHeight = compound.getFloat("defaultHeight");
+            setDefaultHeight(compound.getFloat("defaultHeight"));
         }
     }
 }

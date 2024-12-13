@@ -18,18 +18,17 @@ import net.minecraftforge.fml.common.Mod;
 import org.new_artemis.compatibilities.sizeCap.SizeCapPro;
 import org.new_artemis.util.attributes.ArtemisLibAttributes;
 
-@Mod.EventBusSubscriber(modid = "new_artemis", bus = Mod.EventBusSubscriber.Bus.FORGE)
+@Mod.EventBusSubscriber(modid = "artemislib", bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class AttachAttributes {
 
     @SubscribeEvent
     public static void attachAttributes(EntityAttributeCreationEvent event) {
         // AttributeSupplierを使用して属性を登録
         event.put(EntityType.PLAYER, AttributeSupplier.builder()
-                .add(ArtemisLibAttributes.ENTITY_HEIGHT.get())  // ここでENTITY_HEIGHTの属性を登録
-                .add(ArtemisLibAttributes.ENTITY_WIDTH.get())   // ここでENTITY_WIDTHの属性を登録
+                .add(ArtemisLibAttributes.ENTITY_HEIGHT.get())
+                .add(ArtemisLibAttributes.ENTITY_WIDTH.get())
                 .build());
     }
-
 
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
@@ -43,8 +42,8 @@ public class AttachAttributes {
             float defaultWidth = cap.getDefaultWidth();
 
             if (!cap.isTransformed()) {
-                cap.setDefaultHeight((float) player.getBbHeight());
-                cap.setDefaultWidth((float) player.getBbWidth());
+                cap.setDefaultHeight(player.getBbHeight());
+                cap.setDefaultWidth(player.getBbWidth());
                 cap.setTransformed(true);
             }
 
@@ -73,8 +72,8 @@ public class AttachAttributes {
 
         entity.getCapability(SizeCapPro.SIZE_CAPABILITY).ifPresent(cap -> {
             if (cap.isTransformed()) {
-                float scaleHeight = (float) (entity.getBbHeight() / cap.getDefaultHeight());
-                float scaleWidth = (float) (entity.getBbWidth() / cap.getDefaultWidth());
+                float scaleHeight = entity.getBbHeight() / cap.getDefaultHeight();
+                float scaleWidth = entity.getBbWidth() / cap.getDefaultWidth();
 
                 poseStack.pushPose();
                 poseStack.scale(scaleWidth, scaleHeight, scaleWidth);
